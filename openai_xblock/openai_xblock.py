@@ -1,11 +1,8 @@
 """TO-DO: Write a description of what this XBlock is."""
 
 import pkg_resources
-import json
-
 from django.utils import translation
 from xblock.core import XBlock
-from xblock.fields import String, Scope
 from xblock.fragment import Fragment
 from xblockutils.resources import ResourceLoader
 
@@ -51,7 +48,7 @@ class OpenAI(XBlock):
         if context:
             pass  # TO-DO: do something based on the context.
         html = self.resource_string("static/html/openai.html")
-        frag = Fragment(html.format(self=self))
+        frag = Fragment(html.format(self=self, my_info={"text": "hola mundo"}))
         frag.add_css(self.resource_string("static/css/openai.css"))
 
         # Add i18n js
@@ -78,6 +75,12 @@ class OpenAI(XBlock):
         self.history += f'{self.student_prompt}\n {text_created}'
 
         return text_created
+
+
+    @XBlock.json_handler
+    def get_response(self, data, suffix=''):
+        return {"response": "this is the server response {}".format(datetime.now())}
+
 
     # TO-DO: change this to create the scenarios you'd like to see in the
     # workbench while developing your XBlock.

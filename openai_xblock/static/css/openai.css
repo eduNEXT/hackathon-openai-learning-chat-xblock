@@ -1,9 +1,67 @@
 /* CSS for OpenAI */
 
-.openai_block .count {
-    font-weight: bold;
+.messageContainer {
+    min-height: 500px;
+    max-height: 500px;
+    overflow: scroll;
+    background-color: #f1f5f9;
 }
 
-.openai_block p {
-    cursor: pointer;
+.messageRecivedWrapper,
+.messageSendWrapper {
+    display: flex;
+    align-content: center;
+    width: 100%;
+}
+
+.messageRecivedWrapper {
+    justify-content: flex-start;
+}
+
+.messageSendWrapper {
+    justify-content: flex-end;
+}
+
+.messageSend,
+.messageRecived {
+    padding: 10px;
+    border-radius: 10px;
+    margin: 5px 10px;
+    min-width: fit-content;
+    max-width: 150px;
+}
+
+.messageSend {
+    background-color: #818cf8;
+    color: white;
+}
+
+.messageRecived {
+    background-color: #dbeafe;
+}
+
+
+.inputWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 20px;
+    background-color: #f1f5f9;
+}
+
+.messageInput{
+    resize: vertical;
+    min-height: 36px;
+}
+
+
+.buttonSend {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    border-radius: 50%;
+    background-color: #60a5fa;
+    border: none;
+    margin-left: 10px;
 }
