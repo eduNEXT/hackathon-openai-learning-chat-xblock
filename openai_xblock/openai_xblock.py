@@ -76,9 +76,9 @@ class OpenAI(XBlock):
         if self.student_prompt is None:
             return {"response": "Please write something in the box"}
 
-        text_created = client.ask(f'{self.conditions}\n {self.history}\n {self.student_prompt}')
+        text_created = client.ask(f'{self.conditions}\n\n {self.history}\n\n {self.student_prompt}')
 
-        self.history += f'\n{self.student_prompt}\n {text_created}'
+        self.history += f'\n\n{self.student_prompt}\n\n {text_created}\n\n'
 
         print(self.conditions, self.history, self.student_prompt, text_created)
 
