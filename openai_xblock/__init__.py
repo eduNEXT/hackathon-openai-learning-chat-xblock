@@ -2,6 +2,6 @@
 Init for the OpenAI package.
 """
 
-from .openai import OpenAI
+from .openai_xblock import OpenAI
 
 __version__ = '0.1.0'

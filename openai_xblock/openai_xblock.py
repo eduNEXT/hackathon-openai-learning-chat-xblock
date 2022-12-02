@@ -1,11 +1,15 @@
 """TO-DO: Write a description of what this XBlock is."""
 
 import pkg_resources
+import json
+
 from django.utils import translation
 from xblock.core import XBlock
-from xblock.fields import Integer, Scope
+from xblock.fields import String, Scope
 from xblock.fragment import Fragment
 from xblockutils.resources import ResourceLoader
+
+from openai_xblock import OpenaiClient
 
 
 class OpenAI(XBlock):
@@ -17,9 +21,20 @@ class OpenAI(XBlock):
     # self.<fieldname>.
 
     # TO-DO: delete count, and define your own fields.
-    count = Integer(
-        default=0, scope=Scope.user_state,
-        help="A simple counter, to show something happening",
+    conditions = String(
+        defalut="",
+        scope=Scope.user_state,
+        help="The initial conditions for the conversation established by the tutor",
+    )
+    history = String(
+        default="",
+        scope=Scope.user_state,
+        help="A history of the conversation with the bot",
+    )
+    student_prompt = String(
+        default="",
+        scope=Scope.user_state,
+        help="The last prompt entered by the user",
     )
 
     def resource_string(self, path):
@@ -51,17 +66,18 @@ class OpenAI(XBlock):
     # TO-DO: change this handler to perform your own actions.  You may need more
     # than one handler, or you may not need any handlers at all.
     @XBlock.json_handler
-    def increment_count(self, data, suffix=''):
+    def ask(self, data, suffix=''):
         """
         An example handler, which increments the data.
         """
-        if suffix:
-            pass  # TO-DO: Use the suffix when storing data.
-        # Just to show data coming in...
-        assert data['hello'] == 'world'
+        client = OpenaiClient()
+        self.student_prompt = data[json.loads(data)['text']]
 
-        self.count += 1
-        return {"count": self.count}
+        text_created = client.ask(f'{self.conditions}\n {self.history}\n {self.student_prompt}')
+
+        self.history += f'{self.student_prompt}\n {text_created}'
+
+        return text_created
 
     # TO-DO: change this to create the scenarios you'd like to see in the
     # workbench while developing your XBlock.

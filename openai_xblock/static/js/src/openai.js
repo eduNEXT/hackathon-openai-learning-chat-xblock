@@ -1,17 +1,14 @@
 /* Javascript for OpenAI. */
 function OpenAI(runtime, element) {
+    var handlerUrl = runtime.handlerUrl(element, 'ask');
 
-    function updateCount(result) {
-        $('.count', element).text(result.count);
-    }
-
-    var handlerUrl = runtime.handlerUrl(element, 'increment_count');
-
-    $('p', element).click(function(eventObject) {
+    $('#promptForm').onSubmit(function(eventObject) {
+        eventObject.preventDefault();
+        console.log(eventObject)
         $.ajax({
             type: "POST",
             url: handlerUrl,
-            data: JSON.stringify({"hello": "world"}),
+            data: JSON.stringify({"text": "fdsfdsf"}),
             success: updateCount
         });
     });
