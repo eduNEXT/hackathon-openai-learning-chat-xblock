@@ -1,8 +1,7 @@
 /* Javascript for OpenAI. */
 function OpenAI(runtime, element) {
-    var handlerUrl = runtime.handlerUrl(element, 'increment_count');
-    var responseUrl = runtime.handlerUrl(element, 'get_response');
 
+    const askClientHandler = runtime.handlerUrl(element, 'ask_client');
     const messageLayout = document.querySelector('.messageContainer')
     const input = document.querySelector(".messageInput")
     const buttonSendMessage = document.querySelector('.buttonSend')
@@ -20,18 +19,18 @@ function OpenAI(runtime, element) {
     const getInputValue = () => {
         const message = input.value
 
-        input.value = '';
+        input.value = ''
         return message
     }
 
     const sendMessage = () => {
-        setUserMessage(getInputValue())
+        let userInput = getInputValue()
+        setUserMessage(userInput)
 
-        var handlerUrl = runtime.handlerUrl(element, 'get_response');
         $.ajax({
             type: "POST",
-            url: responseUrl,
-            data: JSON.stringify({}),
+            url: askClientHandler,
+            data: JSON.stringify({"text": userInput}),
             success: updateResponse
         });
     }

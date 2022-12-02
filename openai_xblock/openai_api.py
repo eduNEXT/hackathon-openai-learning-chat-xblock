@@ -12,6 +12,3 @@ class OpenaiClient:
         )
 
         return response['choices'][0]['text']
-
-
-import pdb; pdb.set_trace()

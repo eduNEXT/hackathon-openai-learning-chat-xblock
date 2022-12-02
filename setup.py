@@ -106,7 +106,7 @@ def package_data(pkg, roots):
     return {pkg: data}
 
 
-VERSION = get_version('openai', '__init__.py')
+VERSION = get_version('openai_xblock', '__init__.py')
 
 if sys.argv[-1] == 'tag':
     print("Tagging the version on github:")
@@ -126,7 +126,7 @@ setup(
     author_email='oscm@edx.org',
     url='https://github.com/openedx/openai-xblock',
     packages=find_packages(
-        include=['openai', 'openai.*'],
+        include=['openai_xblock', 'openai_xblock.*'],
         exclude=["*tests"],
     ),
 
@@ -146,8 +146,8 @@ setup(
     ],
     entry_points={
         'xblock.v1': [
-            'openai = openai:OpenAI',
+            'openai_xblock = openai_xblock:OpenAI',
         ]
     },
-    package_data=package_data("openai", ["static", "public"]),
+    package_data=package_data("openai_xblock", ["static", "public"]),
 )

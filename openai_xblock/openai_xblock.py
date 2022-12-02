@@ -1,12 +1,14 @@
 """TO-DO: Write a description of what this XBlock is."""
 
+import json
 import pkg_resources
 from django.utils import translation
 from xblock.core import XBlock
+from xblock.fields import String, Scope
 from xblock.fragment import Fragment
 from xblockutils.resources import ResourceLoader
 
-from openai_xblock import OpenaiClient
+from .openai_api import OpenaiClient
 
 
 class OpenAI(XBlock):
@@ -19,7 +21,9 @@ class OpenAI(XBlock):
 
     # TO-DO: delete count, and define your own fields.
     conditions = String(
-        defalut="",
+        defalut="""
+        my student will ask you something, please answer only in spanish, correct any grammar errors and make as much questions as possible to keep the conversation going
+        """,
         scope=Scope.user_state,
         help="The initial conditions for the conversation established by the tutor",
     )
@@ -63,24 +67,22 @@ class OpenAI(XBlock):
     # TO-DO: change this handler to perform your own actions.  You may need more
     # than one handler, or you may not need any handlers at all.
     @XBlock.json_handler
-    def ask(self, data, suffix=''):
+    def ask_client(self, data, suffix=''):
         """
         An example handler, which increments the data.
         """
         client = OpenaiClient()
-        self.student_prompt = data[json.loads(data)['text']]
+        self.student_prompt = data.get('text', None)
+        if self.student_prompt is None:
+            return {"response": "Please write something in the box"}
 
         text_created = client.ask(f'{self.conditions}\n {self.history}\n {self.student_prompt}')
 
+        print("text_created::" + text_created)
+
         self.history += f'{self.student_prompt}\n {text_created}'
 
-        return text_created
-
-
-    @XBlock.json_handler
-    def get_response(self, data, suffix=''):
-        return {"response": "this is the server response {}".format(datetime.now())}
-
+        return {"response": text_created}
 
     # TO-DO: change this to create the scenarios you'd like to see in the
     # workbench while developing your XBlock.
