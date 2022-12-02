@@ -78,9 +78,9 @@ class OpenAI(XBlock):
 
         text_created = client.ask(f'{self.conditions}\n {self.history}\n {self.student_prompt}')
 
-        print("text_created::" + text_created)
+        self.history += f'\n{self.student_prompt}\n {text_created}'
 
-        self.history += f'{self.student_prompt}\n {text_created}'
+        print(self.conditions, self.history, self.student_prompt, text_created)
 
         return {"response": text_created}
 
