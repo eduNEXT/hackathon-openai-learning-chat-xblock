@@ -84,6 +84,13 @@ class OpenAI(XBlock):
 
         return {"response": text_created}
 
+    @XBlock.json_handler
+    def delete_history(self, data, suffix=''):
+        """
+        Deletes history
+        """
+        self.history = "\n"
+
     # TO-DO: change this to create the scenarios you'd like to see in the
     # workbench while developing your XBlock.
     @staticmethod
