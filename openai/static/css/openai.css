@@ -1,0 +1,9 @@
+/* CSS for OpenAI */
+
+.openai_block .count {
+    font-weight: bold;
+}
+
+.openai_block p {
+    cursor: pointer;
+}
