@@ -2,6 +2,7 @@
 function OpenAI(runtime, element) {
 
     const askClientHandler = runtime.handlerUrl(element, 'ask_client');
+    const deleteHistoryHandler = runtime.handlerUrl(element, 'delete_history');
     const messageLayout = document.querySelector('.messageContainer')
     const input = document.querySelector(".messageInput")
     const buttonSendMessage = document.querySelector('.buttonSend')
@@ -9,6 +10,14 @@ function OpenAI(runtime, element) {
 
     const clearChat = () => {
         messageLayout.innerHTML = ''
+
+        $.ajax({
+            type: "POST",
+            url: deleteHistoryHandler,
+            data: JSON.stringify({}),
+            success: (response) => {
+            }
+        });
     }
 
     const setLoader = () => messageLayout.innerHTML += `
@@ -24,6 +33,7 @@ function OpenAI(runtime, element) {
         removeLoader()
         let message = `<div class="messageRecivedWrapper"><p class="messageRecived">${text.response}</p><div/>`
         messageLayout.innerHTML += message
+        messageLayout.scrollTo(0, '100%');
     }
 
     const setUserMessage = (text) => {

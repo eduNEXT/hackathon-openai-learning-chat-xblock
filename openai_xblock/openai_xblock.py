@@ -22,7 +22,6 @@ class OpenAI(XBlock):
     # TO-DO: delete count, and define your own fields.
     conditions = String(
         defalut="""
-        my student will ask you something, please answer only in spanish, correct any grammar errors and make as much questions as possible to keep the conversation going
         """,
         scope=Scope.user_state,
         help="The initial conditions for the conversation established by the tutor",
@@ -71,6 +70,8 @@ class OpenAI(XBlock):
         """
         An example handler, which increments the data.
         """
+        self.conditions = "my student will ask you something, please answer only in spanish, correct any grammar errors and make as much questions as possible to keep the conversation going"
+
         client = OpenaiClient()
         self.student_prompt = data.get('text', None)
         if self.student_prompt is None:
@@ -80,7 +81,14 @@ class OpenAI(XBlock):
 
         self.history += f'\n\n{self.student_prompt}\n\n {text_created}\n\n'
 
-        print(self.conditions, self.history, self.student_prompt, text_created)
+        print("conditions:")
+        print(self.conditions)
+        print("history:")
+        print(self.history)
+        print("student_prompt:")
+        print(self.student_prompt)
+        print("text_created:")
+        print(text_created)
 
         return {"response": text_created}
 
