@@ -5,9 +5,24 @@ function OpenAI(runtime, element) {
     const messageLayout = document.querySelector('.messageContainer')
     const input = document.querySelector(".messageInput")
     const buttonSendMessage = document.querySelector('.buttonSend')
+    const buttonClear = document.querySelector('.buttonClear')
+
+    const clearChat = () => {
+        messageLayout.innerHTML = ''
+    }
+
+    const setLoader = () => messageLayout.innerHTML += `
+       <div id="loader-chat" class="messageSendWrapper"><div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div><div/>
+    `
+
+    const removeLoader = () => {
+        const loader = document.querySelector('#loader-chat')
+        loader.remove()
+    }
 
     const updateResponse = (text) => {
-        let message = `<div class="messageRecivedWrapper"><p class="messageSend">${text.response}</p><div/>`
+        removeLoader()
+        let message = `<div class="messageRecivedWrapper"><p class="messageRecived">${text.response}</p><div/>`
         messageLayout.innerHTML += message
     }
 
@@ -31,13 +46,20 @@ function OpenAI(runtime, element) {
             type: "POST",
             url: askClientHandler,
             data: JSON.stringify({"text": userInput}),
-            success: updateResponse
+            success: (response) => {
+                setLoader()
+                setTimeout(updateResponse(response), 100)
+            }
         });
     }
 
 
     buttonSendMessage.addEventListener('click', () => {
         sendMessage()
+    })
+
+    buttonClear.addEventListener('click', () => {
+        clearChat()
     })
 
     input.addEventListener('keypress', (key) => {
