@@ -7,11 +7,14 @@ from xblock.core import XBlock
 from xblock.fields import String, Scope
 from xblock.fragment import Fragment
 from xblockutils.resources import ResourceLoader
+from xblockutils.settings import XBlockWithSettingsMixin
+from xblockutils.studio_editable import StudioEditableXBlockMixin
+
 
 from .openai_api import OpenaiClient
 
 
-class OpenAI(XBlock):
+class OpenAI(XBlock, XBlockWithSettingsMixin, StudioEditableXBlockMixin):
     """
     TO-DO: document what your XBlock does.
     """
@@ -36,6 +39,16 @@ class OpenAI(XBlock):
         scope=Scope.user_state,
         help="The last prompt entered by the user",
     )
+    language = String(
+        default="spanish",
+        scope=Scope.settings,
+        help="The last prompt entered by the user",
+    )
+
+    editable_fields = (
+        "language",
+    )
+
 
     def resource_string(self, path):
         """Handy helper for getting resources from our kit."""
@@ -70,7 +83,10 @@ class OpenAI(XBlock):
         """
         An example handler, which increments the data.
         """
-        self.conditions = "my student will ask you something, please answer only in spanish, correct any grammar errors and make as much questions as possible to keep the conversation going"
+        language = self.language
+        # language = "german"
+
+        self.conditions = f"my student will ask you something, please answer only in { language }, correct any grammar errors and make as much questions as possible to keep the conversation going"
 
         client = OpenaiClient()
         self.student_prompt = data.get('text', None)
