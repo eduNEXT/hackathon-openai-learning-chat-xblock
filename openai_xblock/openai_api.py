@@ -1,6 +1,6 @@
 import openai
 
-openai.api_key = 'sk-this-would-be-your-key' # do NOT commit
+openai.api_key = '' # do NOT commit
 
 class OpenaiClient:
     model = 'text-davinci-003'

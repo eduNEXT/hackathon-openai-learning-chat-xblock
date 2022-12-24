@@ -29,6 +29,7 @@
     margin: 5px 10px;
     min-width: fit-content;
     max-width: 150px;
+    box-shadow: 0px 0px 5px 1px #9999992e;
 }
 
 .messageSend {
@@ -50,10 +51,14 @@
 }
 
 .messageInput{
-    resize: vertical;
+    resize: none;
     min-height: 36px;
+    flex-basis: 100%;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0px 0px 5px 1px #9999992e;
 }
-
 
 .buttonSend {
     display: flex;
@@ -75,60 +80,31 @@
     border: none;
 }
 
-
 .lds-ellipsis {
-  display: inline-block;
+  display: flex;
+  gap: 7px;
   position: relative;
-  width: 80px;
-  height: 80px;
+  width: max-content;
 }
 .lds-ellipsis div {
-  position: absolute;
-  top: 33px;
-  width: 13px;
-  height: 13px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
-  background: #fff;
-  animation-timing-function: cubic-bezier(0, 1, 1, 0);
+  background: grey;
+  animation: fade 1s infinite;
 }
-.lds-ellipsis div:nth-child(1) {
-  left: 8px;
-  animation: lds-ellipsis1 0.6s infinite;
-}
-.lds-ellipsis div:nth-child(2) {
-  left: 8px;
-  animation: lds-ellipsis2 0.6s infinite;
-}
-.lds-ellipsis div:nth-child(3) {
-  left: 32px;
-  animation: lds-ellipsis2 0.6s infinite;
-}
-.lds-ellipsis div:nth-child(4) {
-  left: 56px;
-  animation: lds-ellipsis3 0.6s infinite;
-}
-@keyframes lds-ellipsis1 {
-  0% {
-    transform: scale(0);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-@keyframes lds-ellipsis3 {
-  0% {
-    transform: scale(1);
-  }
-  100% {
-    transform: scale(0);
-  }
-}
-@keyframes lds-ellipsis2 {
-  0% {
-    transform: translate(0, 0);
-  }
-  100% {
-    transform: translate(24px, 0);
-  }
+
+@keyframes fade {
+    0% {
+        background-color: transparent;
+    }
+
+    50% {
+        background-color: grey;
+    }
+
+    100% {
+        background-color: transparent;
+    }
 }
 

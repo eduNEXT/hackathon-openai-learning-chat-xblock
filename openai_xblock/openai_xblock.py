@@ -1,10 +1,9 @@
 """TO-DO: Write a description of what this XBlock is."""
 
-import json
 import pkg_resources
 from django.utils import translation
 from xblock.core import XBlock
-from xblock.fields import String, Scope
+from xblock.fields import String, Scope, List
 from xblock.fragment import Fragment
 from xblockutils.resources import ResourceLoader
 from xblockutils.settings import XBlockWithSettingsMixin
@@ -16,37 +15,36 @@ from .openai_api import OpenaiClient
 
 class OpenAI(XBlock, XBlockWithSettingsMixin, StudioEditableXBlockMixin):
     """
-    TO-DO: document what your XBlock does.
+    An XBlock that allows students to interact with the OpenAI language model API through a chat interface
+    within the edX course. The XBlock allows the course instructor to set the language and conditions for
+    the conversation with the language model, and the students can then enter prompts for the language model
+    to respond to. The XBlock stores a history of the conversation between the student and the language model,
+    and provides a button for the student to clear the history if desired.
     """
 
-    # Fields are defined on the class.  You can access them in your code as
-    # self.<fieldname>.
-
-    # TO-DO: delete count, and define your own fields.
-    conditions = String(
-        defalut="""
-        """,
+    history = List(
+        default=[],
         scope=Scope.user_state,
-        help="The initial conditions for the conversation established by the tutor",
-    )
-    history = String(
-        default="",
-        scope=Scope.user_state,
-        help="A history of the conversation with the bot",
+        help="A history of the conversation with the bot.",
     )
     student_prompt = String(
         default="",
         scope=Scope.user_state,
-        help="The last prompt entered by the user",
+        help="The last prompt entered by the user.",
     )
     language = String(
         default="spanish",
         scope=Scope.settings,
-        help="The last prompt entered by the user",
+        help="The language selected by the tutor.",
     )
-
+    conditions = String(
+        default="",
+        scope=Scope.settings,
+        help="The conditions entered by the tutor.",
+    )
     editable_fields = (
         "language",
+        "conditions",
     )
 
 
@@ -76,44 +74,64 @@ class OpenAI(XBlock, XBlockWithSettingsMixin, StudioEditableXBlockMixin):
         frag.initialize_js('OpenAI')
         return frag
 
+    def prepare_prompt(self, history, prompt, context):
+        """
+        Prepares the prompt for the language model by combining the conversation history, the current
+        prompt entered by the student, and any additional context specified by the instructor.
+
+        Args:
+            history (list): A list of strings representing the previous conversations with the language model.
+            prompt (str): The current prompt entered by the student.
+            context (str): Additional context specified by the instructor for the conversation with the language model.
+
+        Returns:
+            str: The prepared prompt for the language model.
+        """
+        text = f'{context}\n'
+        for line in history:
+            text += line
+        text += f'{prompt}\n'
+
+        return text
+
     # TO-DO: change this handler to perform your own actions.  You may need more
     # than one handler, or you may not need any handlers at all.
     @XBlock.json_handler
     def ask_client(self, data, suffix=''):
         """
-        An example handler, which increments the data.
+        Handles a request from the student to ask the language model a question.
+        The method retrieves the student's prompt from the request data, prepares the prompt for the language model,
+        and sends the prompt to the language model using the OpenAI API. The response from the language model
+        is then returned to the student.
+
+        Args:
+            data (dict): A dictionary containing the request data, including the student's prompt.
+            suffix (str, optional): A string that may be used to specify additional information for the request.
+
+        Returns:
+            dict: A dictionary containing the response from the language model.
         """
-        language = self.language
-        # language = "german"
-
-        self.conditions = f"my student will ask you something, please answer only in { language }, correct any grammar errors and make as much questions as possible to keep the conversation going"
-
+        context = f'You can only speak in {self.language}\n{self.conditions}\n'
         client = OpenaiClient()
-        self.student_prompt = data.get('text', None)
-        if self.student_prompt is None:
+        self.student_prompt = data.get('text', "")
+        if self.student_prompt == "":
             return {"response": "Please write something in the box"}
 
-        text_created = client.ask(f'{self.conditions}\n\n {self.history}\n\n {self.student_prompt}')
+        prompt = self.prepare_prompt(self.history, self.student_prompt, context)
 
-        self.history += f'\n\n{self.student_prompt}\n\n {text_created}\n\n'
+        text_created = client.ask(prompt)
 
-        print("conditions:")
-        print(self.conditions)
-        print("history:")
-        print(self.history)
-        print("student_prompt:")
-        print(self.student_prompt)
-        print("text_created:")
-        print(text_created)
+        self.history.append(f'{self.student_prompt}\n')
+        self.history.append(f'{text_created}\n')
 
         return {"response": text_created}
 
     @XBlock.json_handler
     def delete_history(self, data, suffix=''):
         """
-        Deletes history
+        Deletes the chat history.
         """
-        self.history = "\n"
+        self.history = []
 
     # TO-DO: change this to create the scenarios you'd like to see in the
     # workbench while developing your XBlock.
